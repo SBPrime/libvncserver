@@ -7,8 +7,8 @@
 #include <SDL.h>
 #include <SDL_syswm.h>
 #else
-#include <SDL/SDL.h>
-#include <SDL/SDL_syswm.h>
+#include <SDL.h>
+#include <SDL_syswm.h>
 #endif
 #include "scrap.h"
 #include "rfb/rfbconfig.h"

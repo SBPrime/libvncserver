@@ -36,10 +36,10 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ${UNIX})
 option(WITH_ZLIB "Search for the zlib compression library to support additional encodings" ON)
 option(WITH_JPEG "Search for the libjpeg compression library to support additional encodings" ON)
 option(WITH_PNG "Search for the PNG compression library to support additional encodings" ON)
-option(WITH_SDL "Search for the Simple Direct Media Layer library to build an example SDL vnc client" ON)
+#option(WITH_SDL "Search for the Simple Direct Media Layer library to build an example SDL vnc client" ON)
 option(WITH_THREADS "Search for a threading library to build with multithreading support" ON)
 option(WITH_GNUTLS "Search for the GnuTLS secure communications library to support encryption" ON)
-option(WITH_OPENSSL "Search for the OpenSSL cryptography library to support encryption" ON)
+option(WITH_OPENSSL "Search for the OpenSSL cryptography library to support encryption" OFF)
 option(WITH_SYSTEMD "Search for libsystemd to build with systemd socket activation support" ON)
 option(WITH_GCRYPT "Search for libgcrypt to support additional authentication methods in LibVNCClient" ON)
 option(WITH_FFMPEG "Search for FFMPEG to build an example VNC to MPEG encoder" ON)
@@ -99,9 +99,9 @@ if(WITH_PNG)
 endif(WITH_PNG)
 
 
-if(WITH_SDL)
-  find_package(SDL)
-endif(WITH_SDL)
+#if(WITH_SDL)
+#  find_package(SDL)
+#endif(WITH_SDL)
 
 
 if(WITH_THREADS)
@@ -114,9 +114,9 @@ if(WITH_GNUTLS)
 endif(WITH_GNUTLS)
 
 
-if(WITH_OPENSSL)
-  find_package(OpenSSL)
-endif(WITH_OPENSSL)
+#if(WITH_OPENSSL)
+#  find_package(OpenSSL)
+#endif(WITH_OPENSSL)
 
 
 if(WITH_SYSTEMD AND NOT ANDROID)
@@ -466,21 +466,28 @@ set(LIBVNCCLIENT_EXAMPLES
     ppmtest
 )
 
-if(SDL_FOUND)
-  include_directories(${SDL_INCLUDE_DIR})
+MESSAGE("--- SDL2 ---")
+    PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+    INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS})
+    MESSAGE(${SDL2_INCLUDE_DIRS})
+    add_definitions(-DSDL2)
+MESSAGE("--- SDL2 ---")
+
+#if(SDL_FOUND)
+#  include_directories(${SDL_INCLUDE_DIR})
   set(LIBVNCCLIENT_EXAMPLES
     ${LIBVNCCLIENT_EXAMPLES}
     SDLvncviewer
   )
-  set(SDLvncviewer_EXTRA_SOURCES scrap.c)
-endif(SDL_FOUND)
+#  set(SDLvncviewer_EXTRA_SOURCES scrap.c)
+#endif(SDL_FOUND)
 
-if(FFMPEG_FOUND)
-  set(LIBVNCCLIENT_EXAMPLES
-    ${LIBVNCCLIENT_EXAMPLES}
-    vnc2mpg
-  )
-endif(FFMPEG_FOUND)
+#if(FFMPEG_FOUND)
+#  set(LIBVNCCLIENT_EXAMPLES
+#    ${LIBVNCCLIENT_EXAMPLES}
+#    vnc2mpg
+#  )
+#endif(FFMPEG_FOUND)
 
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/examples)
@@ -496,7 +503,7 @@ foreach(e ${LIBVNCCLIENT_EXAMPLES})
   add_executable(client_examples_${e} ${LIBVNCCLIEXAMPLE_DIR}/${e}.c ${LIBVNCCLIEXAMPLE_DIR}/${${e}_EXTRA_SOURCES} )
   set_target_properties(client_examples_${e} PROPERTIES OUTPUT_NAME ${e})
   set_target_properties(client_examples_${e} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/client_examples)
-  target_link_libraries(client_examples_${e} vncclient ${CMAKE_THREAD_LIBS_INIT} ${SDL_LIBRARY} ${FFMPEG_LIBRARIES})
+  target_link_libraries(client_examples_${e} vncclient ${CMAKE_THREAD_LIBS_INIT} ${SDL2_LIBRARIES} SDL2_test ${FFMPEG_LIBRARIES})
 endforeach(e ${LIBVNCCLIENT_EXAMPLES})
 
 

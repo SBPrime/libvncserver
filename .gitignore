@@ -85,3 +85,7 @@ cmake_install.cmake
 /INSTALL
 .dirstamp
 /ltmain.sh
+/client_examples/build/
+
+/build/
+/**/private/
